@@ -1,6 +1,6 @@
 # Coherence
 
-A Flux Store implementation, designed for ease and safety.
+A Flux Store implementation, designed for ease and safety
 
 ## Usage
 
@@ -57,60 +57,76 @@ var AnimalView = React.createClass({
 });
 ```
 
-#### When dispatching
-
 ## Features
 
 Coherence exposes a two-layered API.
 
 The first layer exposes "unsafe" methods, that should only be used inside your
-Store class, to define the behavior of your Store, in terms of routes and route
-handlers, actions and action handlers, and state mutations.
+Store class. These methods allow you to define the behavior of your Store, in terms of:
 
-The second layer is comprised of the methods returned by `fluxSafe`,
-which are data getters, and event subscribe/unsubscribe methods, to be used
-by your Store's consumers.
+- routes and route handlers
+- actions and action handlers
+- state mutations
 
-### API
+The second layer is comprised of the methods intended for external use (e.g. by
+React Components). These are returned by `fluxSafe`:
 
-#### var coherence = Coherence()
+- data getters
+- event subscribe/unsubscribe methods
 
-returns the coherence instance, with the following methods
+### Routing
 
-##### coherence.registerRoute(routeString, routeHandler)
+"Routing" with Coherence, is really just a wrapper around action handling, with
+route matching and param parsing baked in (via
+[dumb-router](https://github.com/clalimarmo/dumb-router)).
 
-binds a handler function that gets called when a matching "navigate" action is
-dispatched (see below for routing) - see
-[dumb-router](https://github.com/clalimarmo/dumb-router) for more information
+Registered routes listen for Actions with a type of
+`Coherence.NAVIGATE_ACTION_TYPE`, and with a `path` property.
 
-##### coherence.handleAction(actionType, actionHandler)
+To trigger your routes:
 
-binds a handler function that gets called when a matching action is dispatched
+```javascript
+yourDispatcher.dispatch({
+  type: Coherence.NAVIGATE_ACTION_TYPE,
+  path: whereYouWantToGo,
+});
+```
 
-##### coherence.setData(key, value)
+## API
 
-updates the values returned by `coherence.fluxSafe().data()`, and triggers the
-event handlers bound by `coherence.fluxSafe().addChangeListener()`
+### Coherence
 
-#### var yourStore = coherence.fluxSafe()
+- __Coherence.NAVIGATE_ACTION_TYPE__
+  - the action type to which registered routes will respond
 
-returns the following "Flux Safe" methods
+### Coherence.Store() - Store Definition Methods
 
-##### yourStore.addChangeListener(callback)
+- __registerRoute(routeString, routeHandler)__
+  - binds a handler function that gets called when a matching "navigate" action
+    is dispatched - see
+    [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for more
+    information
 
-binds the callback to be invoked, whenever `coherence.setData` is called, for use
-when mounting controller components
+- __handleAction(actionType, actionHandler)__
+  - binds a handler function that gets called when a matching action is dispatched
 
-##### yourStore.removeChangeListener(callback)
+- __setData(key, value)__
+  - updates the values returned by `.fluxSafe().data()`, and triggers the event
+    handlers bound by `.fluxSafe().addChangeListener()`
 
-removes the change callbacks, for use when unmounting controller components
+### fluxSafe() - Public Instance Methods
 
-##### yourStore.data()
+- __addChangeListener(callback)__
+  - binds the callback to be invoked, whenever `coherence.setData` is called,
+    for use when mounting controller components
 
-returns any data set by `coherence.setData`
+- __removeChangeListener(callback)__
+  - removes the change callbacks, for use when unmounting controller components
 
-##### yourStore.path(...pathParts)
+- __data()__
+  - returns any data set by `coherence.setData`
 
-returns a path string, if the parts match one of the routes registered by
-`coherence.registerRoute` - see [dumb-router](https://github.com/clalimarmo/dumb-router)
-for more information
+- __path(...pathParts)__
+  - returns a path string, if the parts match one of the routes registered by
+    `coherence.registerRoute` - see [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router)
+    for more information
