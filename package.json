@@ -1,0 +1,49 @@
+{
+  "name": "coherence",
+  "version": "1.0.0",
+  "description": "a safety oriented Flux Store implementation",
+  "main": "build/coherence.js",
+  "scripts": {
+    "test": "gulp spec",
+    "posttest": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clalimarmo/coherence.git"
+  },
+  "keywords": [
+    "routing",
+    "router",
+    "coherence"
+  ],
+  "author": "Carlos Lalimarmo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clalimarmo/coherence/issues"
+  },
+  "files": [
+    "README.md",
+    "src",
+    "build"
+  ],
+  "homepage": "https://github.com/clalimarmo/coherence",
+  "dependencies": {
+    "dumb-router": "^1.0.2"
+  },
+  "devDependencies": {
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0",
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.6",
+    "karma": "^0.13.10",
+    "karma-babel-preprocessor": "^5.2.2",
+    "karma-browserify": "^4.3.0",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "mocha": "^2.3.3",
+    "phantomjs": "^1.9.18",
+    "require-dir": "^0.3.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
