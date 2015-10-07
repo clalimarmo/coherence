@@ -99,7 +99,7 @@ yourDispatcher.dispatch({
 - __Coherence.NAVIGATE_ACTION_TYPE__
   - the action type to which registered routes will respond
 
-### Coherence.Store() - Store Definition Methods
+### Coherence() - Store Definition Methods
 
 - __registerRoute(routeString, routeHandler)__
   - binds a handler function that gets called when a matching "navigate" action
@@ -114,7 +114,7 @@ yourDispatcher.dispatch({
   - updates the values returned by `.fluxSafe().data()`, and triggers the event
     handlers bound by `.fluxSafe().addChangeListener()`
 
-### fluxSafe() - Public Instance Methods
+### .fluxSafe() - Public Instance Methods
 
 - __addChangeListener(callback)__
   - binds the callback to be invoked, whenever `coherence.setData` is called,
