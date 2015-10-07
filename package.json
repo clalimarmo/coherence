@@ -1,7 +1,7 @@
 {
   "name": "coherence",
   "version": "0.0.0",
-  "description": "a safety oriented Flux Store implementation",
+  "description": "a Flux Store implementation, designed for ease and safety",
   "main": "build/coherence.js",
   "scripts": {
     "test": "gulp spec",
@@ -14,7 +14,10 @@
   "keywords": [
     "routing",
     "router",
-    "coherence"
+    "coherence",
+    "flux",
+    "store",
+    "react"
   ],
   "author": "Carlos Lalimarmo",
   "license": "MIT",

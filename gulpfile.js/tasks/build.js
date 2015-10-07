@@ -8,7 +8,7 @@ var babelTransform = babel.configure({
 });
 
 var browserified = function(opts) {
-  return browserify('./src/index.js', opts)
+  return browserify('./src/coherence.js', opts)
     .transform(babelTransform);
 };
 
@@ -17,6 +17,6 @@ gulp.task('build', function() {
     debug: true,
   })
     .bundle()
-    .pipe(source('dumb-router.js'))
+    .pipe(source('coherence.js'))
     .pipe(gulp.dest('./build/'));
 });
