@@ -45,6 +45,45 @@ describe('Coherence:', () => {
     });
 
     context('action handling:', () => {
+      beforeEach(() => {
+        mocks.actionHandler = (action) => {
+          mocks.actionHandler.handledAction = action;
+        };
+
+        mocks.launch3MissilesAction = {
+          type: 'launch-missiles',
+          count: 3,
+        };
+        mocks.launch5MissilesAction = {
+          type: 'launch-missiles',
+          count: 5,
+        };
+        mocks.milk3GoatsAction = {
+          type: 'milk-goats',
+          count: 3,
+        };
+      });
+
+      it('calls action handlers that match a dispatched action', () => {
+        storeDefinition.handleAction('launch-missiles', mocks.actionHandler);
+
+        mocks.dispatcher.dispatch(mocks.launch3MissilesAction);
+        expect(mocks.actionHandler.handledAction).to.eq(mocks.launch3MissilesAction);
+      });
+
+      it('calls action handlers that match a dispatched action', () => {
+        storeDefinition.handleAction('launch-missiles', mocks.actionHandler);
+
+        mocks.dispatcher.dispatch(mocks.launch5MissilesAction);
+        expect(mocks.actionHandler.handledAction).to.eq(mocks.launch5MissilesAction);
+      });
+
+      it('does not call action handlers that do not match a dispatched action', () => {
+        storeDefinition.handleAction('launch-missiles', mocks.actionHandler);
+
+        mocks.dispatcher.dispatch(mocks.milk3GoatsAction);
+        expect(mocks.actionHandler.handledAction).to.not.eq(mocks.milk3GoatsAction);
+      });
     });
 
     context('data mutation', () => {
