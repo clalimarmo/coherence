@@ -28,7 +28,7 @@
   ],
   "homepage": "https://github.com/clalimarmo/coherence",
   "dependencies": {
-    "dumb-router": "^1.0.2"
+    "dumb-router": "^1.0.5"
   },
   "devDependencies": {
     "babelify": "^6.3.0",

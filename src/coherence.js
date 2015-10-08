@@ -5,7 +5,7 @@ const Router = require('dumb-router');
 
 const NAVIGATE_ACTION_TYPE = 'navigate';
 
-const BaseStore = function(dependencies) {
+const Coherence = function(dependencies) {
   const self = {};
   const router = Router();
   const data = Data();
@@ -45,5 +45,5 @@ const BaseStore = function(dependencies) {
   };
 };
 
-setImmutableAttribute(BaseStore, 'NAVIGATE_ACTION_TYPE', NAVIGATE_ACTION_TYPE);
-module.exports = BaseStore;
+setImmutableAttribute(Coherence, 'NAVIGATE_ACTION_TYPE', NAVIGATE_ACTION_TYPE);
+module.exports = Coherence;
