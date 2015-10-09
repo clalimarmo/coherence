@@ -1,6 +1,6 @@
 {
   "name": "coherence",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a safety oriented Flux Store implementation",
   "main": "build/coherence.js",
   "scripts": {
