@@ -3,10 +3,10 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     frameworks: ['browserify', 'mocha', 'chai'],
     preprocessors: {
-      'src/**/*_spec.js': ['browserify'],
+      'build/**/*_spec.js': ['browserify'],
     },
     files: [
-      'src/**/*_spec.js',
+      'build/**/*_spec.js',
     ],
     browserify: {
       debug: true,
