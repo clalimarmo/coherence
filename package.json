@@ -1,11 +1,13 @@
 {
   "name": "coherence",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "a safety oriented Flux Store implementation",
   "main": "build/coherence.js",
   "scripts": {
     "test": "gulp spec",
-    "posttest": "gulp build"
+    "compile": "gulp build",
+    "precompile": "npm run test",
+    "prepublish": "npm run compile"
   },
   "repository": {
     "type": "git",
@@ -28,14 +30,14 @@
   ],
   "homepage": "https://github.com/clalimarmo/coherence",
   "dependencies": {
+    "core-js": "^1.2.1",
     "dumb-router": "^1.0.5"
   },
   "devDependencies": {
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
+    "clean": "^4.0.1",
     "gulp": "^3.9.0",
-    "gulp-uglify": "^1.4.1",
-    "gulp-util": "^3.0.6",
     "karma": "^0.13.10",
     "karma-babel-preprocessor": "^5.2.2",
     "karma-browserify": "^4.3.0",
@@ -45,7 +47,6 @@
     "mocha": "^2.3.3",
     "phantomjs": "^1.9.18",
     "require-dir": "^0.3.0",
-    "uglifyify": "^3.0.1",
     "vinyl-buffer": "^1.0.0"
   }
 }
