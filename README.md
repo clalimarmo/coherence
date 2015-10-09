@@ -128,5 +128,15 @@ yourDispatcher.dispatch({
 
 - __path(...pathParts)__
   - returns a path string, if the parts match one of the routes registered by
-    `coherence.registerRoute` - see [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router)
-    for more information
+    `coherence.registerRoute` - see
+    [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for
+    more information
+
+## Development
+
+Add or modify tests to reflect the change you want.
+
+Run them with `npm test`, and update the code in `src/` till your tests pass.
+
+Running the tests will run `npm run compile`, which outputs the code as ES5,
+polyfilled via `core-js`.
