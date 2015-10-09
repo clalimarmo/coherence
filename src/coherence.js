@@ -1,3 +1,5 @@
+require('core-js');
+
 const setImmutableAttribute = require('./util/set_immutable_attribute');
 
 const Data = require('./data');

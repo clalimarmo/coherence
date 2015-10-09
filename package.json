@@ -25,8 +25,8 @@
   },
   "files": [
     "README.md",
-    "src",
-    "build"
+    "src/",
+    "build/"
   ],
   "homepage": "https://github.com/clalimarmo/coherence",
   "dependencies": {
@@ -37,7 +37,9 @@
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "clean": "^4.0.1",
+    "del": "^2.0.2",
     "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
     "karma": "^0.13.10",
     "karma-babel-preprocessor": "^5.2.2",
     "karma-browserify": "^4.3.0",
