@@ -17,13 +17,13 @@ function AnimalStore(dependencies) {
   coherence.registerRoute('/animals/:animalId', show);
 
   function speak(action) {
-    coherence.set('words', action.words);
+    coherence.set({words: action.words});
   }
 
   function show(path, params) {
     animalData.fetch(params.animalId)
       .then(function(animal) {
-        coherence.set('currentAnimal', animal);
+        coherence.set({currentAnimal: animal});
       });
   }
 
@@ -110,7 +110,7 @@ yourDispatcher.dispatch({
 - __handleAction(actionType, actionHandler)__
   - binds a handler function that gets called when a matching action is dispatched
 
-- __setData(key, value)__
+- __set(newValues)__
   - updates the values returned by `.fluxSafe().data()`, and triggers the event
     handlers bound by `.fluxSafe().addChangeListener()`
 

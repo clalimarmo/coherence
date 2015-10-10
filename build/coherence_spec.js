@@ -90,7 +90,7 @@ describe('Coherence:', function () {
     });
 
     it('updates the exposed data', function () {
-      coherence.setData('mode', 'stun');
+      coherence.set({ mode: 'stun' });
       expect(coherence.fluxSafe().data()).to.deep.eq({
         mode: 'stun'
       });
@@ -98,14 +98,14 @@ describe('Coherence:', function () {
 
     it('fires change listeners', function () {
       coherence.fluxSafe().addChangeListener(mocks.listener);
-      coherence.setData('power level', 9007);
+      coherence.set({ 'power level': 9007 });
       expect(mocks.listener.callCount).to.eq(1);
     });
 
     it('does not fire de-registered change listeners', function () {
       coherence.fluxSafe().addChangeListener(mocks.listener);
       coherence.fluxSafe().removeChangeListener(mocks.listener);
-      coherence.setData('power level', 9007);
+      coherence.set({ 'power level': 9007 });
       expect(mocks.listener.callCount).to.eq(0);
     });
   });

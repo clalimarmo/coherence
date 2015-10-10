@@ -26,8 +26,11 @@ const Data = function() {
     return data;
   };
 
-  self.set = function(key, value) {
-    data[key] = value;
+  self.set = function(newData) {
+    Object.keys(newData).forEach((key) => {
+      const newValue = newData[key];
+      data[key] = newValue;
+    });
     events.emit(CHANGE_EVENT);
   };
 

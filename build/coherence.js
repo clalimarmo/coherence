@@ -22,7 +22,7 @@ var Coherence = function Coherence(dependencies) {
     actionHandlers[actionType] = handler;
   };
 
-  self.setData = data.set;
+  self.set = data.set;
 
   self.fluxSafe = function () {
     return {

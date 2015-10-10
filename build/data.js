@@ -28,8 +28,11 @@ var Data = function Data() {
     return data;
   };
 
-  self.set = function (key, value) {
-    data[key] = value;
+  self.set = function (newData) {
+    Object.keys(newData).forEach(function (key) {
+      var newValue = newData[key];
+      data[key] = newValue;
+    });
     events.emit(CHANGE_EVENT);
   };
 
