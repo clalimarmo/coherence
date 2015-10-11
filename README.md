@@ -117,14 +117,14 @@ yourDispatcher.dispatch({
 ### .fluxSafe() - Public Instance Methods
 
 - __addChangeListener(callback)__
-  - binds the callback to be invoked, whenever `coherence.setData` is called,
+  - binds the callback to be invoked, whenever `coherence.set` is called,
     for use when mounting controller components
 
 - __removeChangeListener(callback)__
   - removes the change callbacks, for use when unmounting controller components
 
 - __data()__
-  - returns any data set by `coherence.setData`
+  - returns any data set by `coherence.set`
 
 - __path(...pathParts)__
   - returns a path string, if the parts match one of the routes registered by
