@@ -4,45 +4,30 @@ require('core-js');
 
 var setImmutableAttribute = require('./util/set_immutable_attribute');
 
+var ActionHandler = require('./action_handler');
 var Data = require('./data');
 var Router = require('dumb-router');
 
 var NAVIGATE_ACTION_TYPE = 'navigate';
 
-var Coherence = function Coherence(dependencies) {
-  var self = {};
+var Coherence = function Coherence(dispatcher, configure) {
   var router = Router();
-  var data = Data();
+  var state = Data();
+  var actionHandler = ActionHandler();
 
-  var actionHandlers = {};
+  configure(router, actionHandler, state);
 
-  self.registerRoute = router.register;
-
-  self.handleAction = function (actionType, handler) {
-    actionHandlers[actionType] = handler;
+  var storeMethods = {
+    path: router.path,
+    data: state.data,
+    addChangeListener: state.addChangeListener,
+    removeChangeListener: state.removeChangeListener
   };
 
-  self.set = data.set;
+  actionHandler.register(NAVIGATE_ACTION_TYPE, navigate);
+  dispatcher.register(actionHandler.execute);
 
-  self.fluxSafe = function () {
-    return {
-      path: router.path,
-      data: data.data,
-      addChangeListener: data.addChangeListener,
-      removeChangeListener: data.removeChangeListener
-    };
-  };
-
-  dependencies.dispatcher.register(function (action) {
-    var handler = actionHandlers[action.type];
-    if (handler) {
-      handler(action);
-    }
-  });
-
-  self.handleAction(NAVIGATE_ACTION_TYPE, navigate);
-
-  return self;
+  return storeMethods;
 
   function navigate(action) {
     router.execute(action.path);

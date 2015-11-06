@@ -6,7 +6,6 @@ var Coherence = require('./coherence');
 
 describe('Coherence:', function () {
   var mocks;
-  var coherence;
 
   beforeEach(function () {
     mocks = {};
@@ -15,7 +14,6 @@ describe('Coherence:', function () {
         mocks.dispatcher.dispatch = callback;
       }
     };
-    coherence = Coherence({ dispatcher: mocks.dispatcher });
   });
 
   context('route registration:', function () {
@@ -27,7 +25,9 @@ describe('Coherence:', function () {
     });
 
     it('adds handlers to be called for a matching "navigate" action', function () {
-      coherence.registerRoute('/users/:userId', mocks.routeHandler);
+      Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+        router.register('/users/:userId', mocks.routeHandler);
+      });
 
       mocks.dispatcher.dispatch({
         type: Coherence.NAVIGATE_ACTION_TYPE,
@@ -57,31 +57,29 @@ describe('Coherence:', function () {
         type: 'milk-goats',
         count: 3
       };
+
+      Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+        actionHandler.register('launch-missiles', mocks.actionHandler);
+      });
     });
 
     it('calls action handlers that match a dispatched action', function () {
-      coherence.handleAction('launch-missiles', mocks.actionHandler);
-
       mocks.dispatcher.dispatch(mocks.launch3MissilesAction);
       expect(mocks.actionHandler.handledAction).to.eq(mocks.launch3MissilesAction);
     });
 
     it('calls action handlers that match a dispatched action', function () {
-      coherence.handleAction('launch-missiles', mocks.actionHandler);
-
       mocks.dispatcher.dispatch(mocks.launch5MissilesAction);
       expect(mocks.actionHandler.handledAction).to.eq(mocks.launch5MissilesAction);
     });
 
     it('does not call action handlers that do not match a dispatched action', function () {
-      coherence.handleAction('launch-missiles', mocks.actionHandler);
-
       mocks.dispatcher.dispatch(mocks.milk3GoatsAction);
       expect(mocks.actionHandler.handledAction).to.not.eq(mocks.milk3GoatsAction);
     });
   });
 
-  context('data mutation', function () {
+  context('state changes', function () {
     beforeEach(function () {
       mocks.listener = function () {
         mocks.listener.callCount++;
@@ -90,60 +88,75 @@ describe('Coherence:', function () {
     });
 
     it('updates the exposed data', function () {
-      coherence.set({ mode: 'stun' });
-      expect(coherence.fluxSafe().data()).to.deep.eq({
+      var store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+        state.set({ mode: 'stun' });
+      });
+
+      expect(store.data()).to.deep.eq({
         mode: 'stun'
       });
     });
 
     it('fires change listeners', function () {
-      coherence.fluxSafe().addChangeListener(mocks.listener);
-      coherence.set({ 'power level': 9007 });
+      var changeData;
+      var store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+        changeData = function () {
+          state.set({ mode: 'stun' });
+        };
+      });
+
+      store.addChangeListener(mocks.listener);
+      changeData();
       expect(mocks.listener.callCount).to.eq(1);
     });
 
     it('does not fire de-registered change listeners', function () {
-      coherence.fluxSafe().addChangeListener(mocks.listener);
-      coherence.fluxSafe().removeChangeListener(mocks.listener);
-      coherence.set({ 'power level': 9007 });
+      var changeData;
+      var store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+        changeData = function () {
+          state.set({ mode: 'stun' });
+        };
+      });
+
+      store.addChangeListener(mocks.listener);
+      store.removeChangeListener(mocks.listener);
+      changeData();
       expect(mocks.listener.callCount).to.eq(0);
     });
   });
 
-  context('fluxSafe methods:', function () {
-    var fluxSafe;
-
-    beforeEach(function () {
-      fluxSafe = coherence.fluxSafe();
-    });
+  context('public store methods:', function () {
+    var store;
 
     context('path:', function () {
       beforeEach(function () {
         mocks.routeHandler = function () {};
-        coherence.registerRoute('/users/:userId', mocks.routeHandler);
-        coherence.registerRoute('/api', null, function (router) {
-          router.register('/foods', mocks.routeHandler);
+        store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+          router.register('/users/:userId', mocks.routeHandler);
+          router.register('/api', null, function (router) {
+            router.register('/foods', mocks.routeHandler);
+          });
         });
       });
 
       it('returns paths that match routes with handlers', function () {
-        expect(fluxSafe.path('users', 6)).to.eq('/users/6');
-        expect(fluxSafe.path('users', 'jimmy')).to.eq('/users/jimmy');
-        expect(fluxSafe.path('api', 'foods')).to.eq('/api/foods');
+        expect(store.path('users', 6)).to.eq('/users/6');
+        expect(store.path('users', 'jimmy')).to.eq('/users/jimmy');
+        expect(store.path('api', 'foods')).to.eq('/api/foods');
       });
 
       it('throws errors for paths scoping routes, without handlers', function () {
         expect(function () {
-          fluxSafe.path('api');
+          store.path('api');
         }).to['throw'](Error);
       });
 
       it('throws errors for paths that do not match routes', function () {
         expect(function () {
-          fluxSafe.path('users');
+          store.path('users');
         }).to['throw'](Error);
         expect(function () {
-          fluxSafe.path('gremlins');
+          store.path('gremlins');
         }).to['throw'](Error);
       });
     });
