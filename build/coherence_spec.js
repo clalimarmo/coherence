@@ -25,7 +25,7 @@ describe('Coherence:', function () {
     });
 
     it('adds handlers to be called for a matching "navigate" action', function () {
-      Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+      Coherence(mocks.dispatcher, function (router, actions, state) {
         router.register('/users/:userId', mocks.routeHandler);
       });
 
@@ -58,8 +58,8 @@ describe('Coherence:', function () {
         count: 3
       };
 
-      Coherence(mocks.dispatcher, function (router, actionHandler, state) {
-        actionHandler.register('launch-missiles', mocks.actionHandler);
+      Coherence(mocks.dispatcher, function (router, actions, state) {
+        actions.register('launch-missiles', mocks.actionHandler);
       });
     });
 
@@ -88,7 +88,7 @@ describe('Coherence:', function () {
     });
 
     it('updates the exposed data', function () {
-      var store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+      var store = Coherence(mocks.dispatcher, function (router, actions, state) {
         state.set({ mode: 'stun' });
       });
 
@@ -99,7 +99,7 @@ describe('Coherence:', function () {
 
     it('fires change listeners', function () {
       var changeData;
-      var store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+      var store = Coherence(mocks.dispatcher, function (router, actions, state) {
         changeData = function () {
           state.set({ mode: 'stun' });
         };
@@ -112,7 +112,7 @@ describe('Coherence:', function () {
 
     it('does not fire de-registered change listeners', function () {
       var changeData;
-      var store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+      var store = Coherence(mocks.dispatcher, function (router, actions, state) {
         changeData = function () {
           state.set({ mode: 'stun' });
         };
@@ -131,7 +131,7 @@ describe('Coherence:', function () {
     context('path:', function () {
       beforeEach(function () {
         mocks.routeHandler = function () {};
-        store = Coherence(mocks.dispatcher, function (router, actionHandler, state) {
+        store = Coherence(mocks.dispatcher, function (router, actions, state) {
           router.register('/users/:userId', mocks.routeHandler);
           router.register('/api', null, function (router) {
             router.register('/foods', mocks.routeHandler);

@@ -16,10 +16,12 @@ function AnimalStore(dependencies) {
     router.register('/animals/:animalId', showAnimal);
     actions.register('speak', speak);
 
+    // action handler
     function speak(action) {
       state.set({words: action.words});
     }
 
+    // route handler
     function show(path, params) {
       animalData.fetch(params.animalId).then(function(animal) {
         state.set({showAnimal: animal});
@@ -87,34 +89,38 @@ yourDispatcher.dispatch({
 - __Coherence.NAVIGATE_ACTION_TYPE__
   - the action type to which registered routes will respond
 
-### Coherence Configuration
+### Defining a Store
 
+```javascript
+var store = Coherence(dispatcher, function(router, actions, state) {
+  /* define store behavior here */
+});
+```
 The Coherence function takes two arguments:
 
 - __dispatcher__
-  - must define a `register` method, whose semantics are described by Flux
+  - must define a `register` method that conforms to the semantics described by
+    Flux
 
 - __configurer__
-  - a callback, that accepts three arguments `function (router, actions, state) {}`
+  - a callback, that accepts three arguments, used together to define the
+    behavior of the returned store instance
 
-#### Router
+    - __router.register(routeString, routeHandler)__
+      - binds a handler function that gets called when a matching "navigate"
+        action is dispatched - see
+        [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router)
+        for more information
+      - the handler function receives two params: the matching `path` string,
+        and a `params` object
 
-- __router.register(routeString, routeHandler)__
-  - binds a handler function that gets called when a matching "navigate" action
-    is dispatched - see
-    [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for more
-    information
+    - __actions.register(actionType, actionHandler)__
+      - binds a handler function that gets called when a matching action is dispatched
+      - the handler function receives the action payload object
 
-#### Actions
-
-- __actions.register(actionType, actionHandler)__
-  - binds a handler function that gets called when a matching action is dispatched
-
-#### State
-
-- __state.set(newValues)__
-  - updates the values returned by the public method `store.data()`, and triggers the event
-    handlers bound by `store.addChangeListener()`
+    - __state.set(newValues)__
+      - updates the values returned by the public method `store.data()`, and triggers the event
+        handlers bound by `store.addChangeListener()`
 
 ### Public Instance Methods
 
