@@ -23,7 +23,7 @@ describe('Coherence:', () => {
     });
 
     it('adds handlers to be called for a matching "navigate" action', () => {
-      Coherence(mocks.dispatcher, (router, actionHandler, state) => {
+      Coherence(mocks.dispatcher, (router, actions, state) => {
         router.register('/users/:userId', mocks.routeHandler);
       });
 
@@ -56,8 +56,8 @@ describe('Coherence:', () => {
         count: 3,
       };
 
-      Coherence(mocks.dispatcher, (router, actionHandler, state) => {
-        actionHandler.register('launch-missiles', mocks.actionHandler);
+      Coherence(mocks.dispatcher, (router, actions, state) => {
+        actions.register('launch-missiles', mocks.actionHandler);
       });
     });
 
@@ -86,7 +86,7 @@ describe('Coherence:', () => {
     });
 
     it('updates the exposed data', () => {
-      const store = Coherence(mocks.dispatcher, (router, actionHandler, state) => {
+      const store = Coherence(mocks.dispatcher, (router, actions, state) => {
         state.set({mode: 'stun'});
       });
 
@@ -97,7 +97,7 @@ describe('Coherence:', () => {
 
     it('fires change listeners', () => {
       var changeData;
-      const store = Coherence(mocks.dispatcher, (router, actionHandler, state) => {
+      const store = Coherence(mocks.dispatcher, (router, actions, state) => {
         changeData = () => {
           state.set({mode: 'stun'});
         };
@@ -110,7 +110,7 @@ describe('Coherence:', () => {
 
     it('does not fire de-registered change listeners', () => {
       var changeData;
-      const store = Coherence(mocks.dispatcher, (router, actionHandler, state) => {
+      const store = Coherence(mocks.dispatcher, (router, actions, state) => {
         changeData = () => {
           state.set({mode: 'stun'});
         };
@@ -129,7 +129,7 @@ describe('Coherence:', () => {
     context('path:', () => {
       beforeEach(() => {
         mocks.routeHandler = () => {};
-        store = Coherence(mocks.dispatcher, (router, actionHandler, state) => {
+        store = Coherence(mocks.dispatcher, (router, actions, state) => {
           router.register('/users/:userId', mocks.routeHandler);
           router.register('/api', null, (router) => {
             router.register('/foods', mocks.routeHandler);
