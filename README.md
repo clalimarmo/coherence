@@ -1,6 +1,6 @@
 # Coherence
 
-A Flux Store implementation, designed for ease and safety
+A safety oriented Flux Store factory
 
 ## Usage
 
@@ -10,27 +10,32 @@ A Flux Store implementation, designed for ease and safety
 var Coherence = require('coherence');
 
 function AnimalStore(dependencies) {
-  var coherence = Coherence({dispatcher: dependencies.dispatcher});
-  var animalData = MyAnimalDataSource();
+  const animalData = dependencies.animalData;
 
-  coherence.registerHandler('speak', speak);
-  coherence.registerRoute('/animals/:animalId', show);
+  const store = Coherence(dependencies.dispatcher, function(router, actions, state) {
+    router.register('/animals/:animalId', showAnimal);
+    actions.register('speak', speak);
 
-  function speak(action) {
-    coherence.set({words: action.words});
-  }
+    // action handler
+    function speak(action) {
+      state.set({words: action.words});
+    }
 
-  function show(path, params) {
-    animalData.fetch(params.animalId)
-      .then(function(animal) {
-        coherence.set({currentAnimal: animal});
+    // route handler
+    function show(path, params) {
+      animalData.fetch(params.animalId).then(function(animal) {
+        state.set({showAnimal: animal});
       });
-  }
+    }
+  });
 
-  return coherence.fluxSafe();
-}
+  return store;
+};
 
-AnimalStore.singleton = AnimalStore({dispatcher: appDispatcher});
+AnimalStore.instance = AnimalStore({
+  dispatcher: require('./my-app-dispatcher'),
+  animalData: require('./my-animal-data'),
+});
 
 module.exports = AnimalStore;
 ```
@@ -40,7 +45,7 @@ module.exports = AnimalStore;
 #### In your controller components
 
 ```javascript
-var animalStore = require('./animal_store').singleton;
+var animalStore = require('./animal_store').instance;
 var AnimalView = React.createClass({
   componentWillMount: function() {
     animalStore.addChangeListener(this.updateState);
@@ -58,21 +63,6 @@ var AnimalView = React.createClass({
 ```
 
 ## Features
-
-Coherence exposes a two-layered API.
-
-The first layer exposes "unsafe" methods, that should only be used inside your
-Store class. These methods allow you to define the behavior of your Store, in terms of:
-
-- routes and route handlers
-- actions and action handlers
-- state mutations
-
-The second layer is comprised of the methods intended for external use (e.g. by
-React Components). These are returned by `fluxSafe`:
-
-- data getters
-- event subscribe/unsubscribe methods
 
 ### Routing
 
@@ -99,36 +89,54 @@ yourDispatcher.dispatch({
 - __Coherence.NAVIGATE_ACTION_TYPE__
   - the action type to which registered routes will respond
 
-### Coherence() - Store Definition Methods
+### Defining a Store
 
-- __registerRoute(routeString, routeHandler)__
-  - binds a handler function that gets called when a matching "navigate" action
-    is dispatched - see
-    [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for more
-    information
+```javascript
+var store = Coherence(dispatcher, function(router, actions, state) {
+  /* define store behavior here */
+});
+```
+The Coherence function takes two arguments:
 
-- __handleAction(actionType, actionHandler)__
-  - binds a handler function that gets called when a matching action is dispatched
+- __dispatcher__
+  - must define a `register` method that conforms to the semantics described by
+    Flux
 
-- __set(newValues)__
-  - updates the values returned by `.fluxSafe().data()`, and triggers the event
-    handlers bound by `.fluxSafe().addChangeListener()`
+- __configurer__
+  - a callback, that accepts three arguments, used together to define the
+    behavior of the returned store instance
 
-### .fluxSafe() - Public Instance Methods
+    - __router.register(routeString, routeHandler)__
+      - binds a handler function that gets called when a matching "navigate"
+        action is dispatched - see
+        [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router)
+        for more information
+      - the handler function receives two params: the matching `path` string,
+        and a `params` object
 
-- __addChangeListener(callback)__
+    - __actions.register(actionType, actionHandler)__
+      - binds a handler function that gets called when a matching action is dispatched
+      - the handler function receives the action payload object
+
+    - __state.set(newValues)__
+      - updates the values returned by the public method `store.data()`, and triggers the event
+        handlers bound by `store.addChangeListener()`
+
+### Public Instance Methods
+
+- __store.addChangeListener(callback)__
   - binds the callback to be invoked, whenever `coherence.set` is called,
     for use when mounting controller components
 
-- __removeChangeListener(callback)__
+- __store.removeChangeListener(callback)__
   - removes the change callbacks, for use when unmounting controller components
 
-- __data()__
-  - returns any data set by `coherence.set`
+- __store.data()__
+  - returns any data set by `state.set`
 
-- __path(...pathParts)__
+- __store.path(...pathParts)__
   - returns a path string, if the parts match one of the routes registered by
-    `coherence.registerRoute` - see
+    `router.register` - see
     [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for
     more information
 
