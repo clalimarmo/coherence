@@ -10,9 +10,9 @@ A safety oriented Flux Store factory
 var Coherence = require('coherence');
 
 function AnimalStore(dependencies) {
-  const animalData = dependencies.animalData;
+  var animalData = dependencies.animalData;
 
-  const store = Coherence(dependencies.dispatcher, function(router, actions, state) {
+  var store = Coherence(dependencies.dispatcher, function(router, actions, state) {
     router.register('/animals/:animalId', showAnimal);
     actions.register('speak', speak);
 
