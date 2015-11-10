@@ -48,7 +48,11 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.3.3",
     "phantomjs": "^1.9.18",
+    "react": "^0.14.2",
+    "react-addons-test-utils": "^0.14.2",
+    "react-dom": "^0.14.2",
     "require-dir": "^0.3.0",
+    "rx-lite": "^4.0.6",
     "vinyl-buffer": "^1.0.0"
   }
 }

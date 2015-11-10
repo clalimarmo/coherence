@@ -25,7 +25,7 @@ describe('Coherence:', function () {
     });
 
     it('adds handlers to be called for a matching "navigate" action', function () {
-      Coherence(mocks.dispatcher, function (router, actions, state) {
+      Coherence(mocks.dispatcher, function (router, actions, expose) {
         router.register('/users/:userId', mocks.routeHandler);
       });
 
@@ -58,7 +58,7 @@ describe('Coherence:', function () {
         count: 3
       };
 
-      Coherence(mocks.dispatcher, function (router, actions, state) {
+      Coherence(mocks.dispatcher, function (router, actions, expose) {
         actions.register('launch-missiles', mocks.actionHandler);
       });
     });
@@ -79,86 +79,37 @@ describe('Coherence:', function () {
     });
   });
 
-  context('state changes', function () {
-    beforeEach(function () {
-      mocks.listener = function () {
-        mocks.listener.callCount++;
-      };
-      mocks.listener.callCount = 0;
-    });
-
-    it('updates the exposed data', function () {
-      var store = Coherence(mocks.dispatcher, function (router, actions, state) {
-        state.set({ mode: 'stun' });
-      });
-
-      expect(store.data()).to.deep.eq({
-        mode: 'stun'
-      });
-    });
-
-    it('fires change listeners', function () {
-      var changeData;
-      var store = Coherence(mocks.dispatcher, function (router, actions, state) {
-        changeData = function () {
-          state.set({ mode: 'stun' });
-        };
-      });
-
-      store.addChangeListener(mocks.listener);
-      changeData();
-      expect(mocks.listener.callCount).to.eq(1);
-    });
-
-    it('does not fire de-registered change listeners', function () {
-      var changeData;
-      var store = Coherence(mocks.dispatcher, function (router, actions, state) {
-        changeData = function () {
-          state.set({ mode: 'stun' });
-        };
-      });
-
-      store.addChangeListener(mocks.listener);
-      store.removeChangeListener(mocks.listener);
-      changeData();
-      expect(mocks.listener.callCount).to.eq(0);
-    });
-  });
-
-  context('public store methods:', function () {
+  context('path:', function () {
     var store;
-
-    context('path:', function () {
-      beforeEach(function () {
-        mocks.routeHandler = function () {};
-        store = Coherence(mocks.dispatcher, function (router, actions, state) {
-          router.register('/users/:userId', mocks.routeHandler);
-          router.register('/api', null, function (router) {
-            router.register('/foods', mocks.routeHandler);
-          });
+    beforeEach(function () {
+      mocks.routeHandler = function () {};
+      store = Coherence(mocks.dispatcher, function (router, actions, expose) {
+        router.register('/users/:userId', mocks.routeHandler);
+        router.register('/api', null, function (router) {
+          router.register('/foods', mocks.routeHandler);
         });
       });
+    });
 
-      it('returns paths that match routes with handlers', function () {
-        expect(store.path('users', 6)).to.eq('/users/6');
-        expect(store.path('users', 'jimmy')).to.eq('/users/jimmy');
-        expect(store.path('api', 'foods')).to.eq('/api/foods');
-      });
+    it('returns paths that match routes with handlers', function () {
+      expect(store.path('users', 6)).to.eq('/users/6');
+      expect(store.path('users', 'jimmy')).to.eq('/users/jimmy');
+      expect(store.path('api', 'foods')).to.eq('/api/foods');
+    });
 
-      it('throws errors for paths scoping routes, without handlers', function () {
-        expect(function () {
-          store.path('api');
-        }).to['throw'](Error);
-      });
+    it('throws errors for paths scoping routes, without handlers', function () {
+      expect(function () {
+        store.path('api');
+      }).to['throw'](Error);
+    });
 
-      it('throws errors for paths that do not match routes', function () {
-        expect(function () {
-          store.path('users');
-        }).to['throw'](Error);
-        expect(function () {
-          store.path('gremlins');
-        }).to['throw'](Error);
-      });
+    it('throws errors for paths that do not match routes', function () {
+      expect(function () {
+        store.path('users');
+      }).to['throw'](Error);
+      expect(function () {
+        store.path('gremlins');
+      }).to['throw'](Error);
     });
   });
 });

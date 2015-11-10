@@ -12,19 +12,23 @@ var Coherence = require('coherence');
 function AnimalStore(dependencies) {
   var animalData = dependencies.animalData;
 
-  var store = Coherence(dependencies.dispatcher, function(router, actions, state) {
+  var store = Coherence(dependencies.dispatcher, function(router, actions, expose) {
+    // exposed data, as Rx.ReplaySubject
+    const words = expose('words');
+    const currentAnimal = expose('currentAnimal');
+
     router.register('/animals/:animalId', showAnimal);
     actions.register('speak', speak);
 
     // action handler
     function speak(action) {
-      state.set({words: action.words});
+      words.onNext(action.words);
     }
 
     // route handler
     function show(path, params) {
       animalData.fetch(params.animalId).then(function(animal) {
-        state.set({showAnimal: animal});
+        currentAnimal.onNext(animal);
       });
     }
   });
@@ -48,16 +52,21 @@ module.exports = AnimalStore;
 var animalStore = require('./animal_store').instance;
 var AnimalView = React.createClass({
   componentWillMount: function() {
-    animalStore.addChangeListener(this.updateState);
+    this.coherenceSubscriptions = animalStore.subscribe(this, {
+      animalData: 'animalData',
+      words: 'animalSays',
+    });
   },
   componentWillUnmount: function() {
-    animalStore.removeChangeListener(this.updateState);
-  },
-  updateState: function() {
-    this.setState({animalData: animalStore.data()});
+    this.coherenceSubscriptions.unsubscribe();
   },
   render: function() {
-    return (<div>...</div>);
+    return (
+      <div>
+        <AnimalData data={this.state.animalData} />
+        <p>Animal says: {this.state.animalSays}</p>
+      </div>
+    );
   }
 });
 ```
@@ -118,21 +127,27 @@ The Coherence function takes two arguments:
       - binds a handler function that gets called when a matching action is dispatched
       - the handler function receives the action payload object
 
-    - __state.set(newValues)__
-      - updates the values returned by the public method `store.data()`, and triggers the event
-        handlers bound by `store.addChangeListener()`
+    - var subject = __expose(attributeName)__
+      - Instantiates and returns an
+        [Rx.BehaviorSubject](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/subjects/behaviorsubject.md),
+        which components may be bound to via `store.subscribe`.
+        `subject.onNext(nextValue)` will push the `nextValue` to subscribed components.
 
 ### Public Instance Methods
 
-- __store.addChangeListener(callback)__
-  - binds the callback to be invoked, whenever `coherence.set` is called,
-    for use when mounting controller components
+Within the context of a React class definition:
 
-- __store.removeChangeListener(callback)__
-  - removes the change callbacks, for use when unmounting controller components
+- this.subscriptions = __store.subscribe(this, bindingNames)__
+  - binds the component to update its state, whenever `subject.set` is called.
+  - `this` is the React component
+  - `bindingNames` can be either be
+    - an object, mapping exposed subject names, to component state properties
+    - or it can just be an array of exposed subject names, if you don't need
+      to use different names for your subjects, inside your component.
 
-- __store.data()__
-  - returns any data set by `state.set`
+- __this.subscriptions.unsubscribe()__
+  - cleans up the subscriptions set up by `store.subscribe`. Call this from
+    `componentWillUnmount`
 
 - __store.path(...pathParts)__
   - returns a path string, if the parts match one of the routes registered by

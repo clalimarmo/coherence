@@ -3,29 +3,32 @@ require('core-js');
 const setImmutableAttribute = require('./util/set_immutable_attribute');
 
 const ActionHandler = require('./action_handler');
-const Data = require('./data');
+const Exposer = require('./exposer');
 const Router = require('dumb-router');
+const ReactSubscriber = require('./react_subscriber');
 
 const NAVIGATE_ACTION_TYPE = 'navigate';
 
 const Coherence = function(dispatcher, configure) {
+  const self = {};
+
   const router = Router();
-  const state = Data();
   const actionHandler = ActionHandler();
+  const exposer = Exposer();
+  const reactSubscriber = ReactSubscriber(exposer);
 
-  configure(router, actionHandler, state);
+  self.path = router.path;
 
-  const storeMethods = {
-    path: router.path,
-    data: state.data,
-    addChangeListener: state.addChangeListener,
-    removeChangeListener: state.removeChangeListener,
-  };
+  self.subscribe = reactSubscriber.subscribe;
 
-  actionHandler.register(NAVIGATE_ACTION_TYPE, navigate);
-  dispatcher.register(actionHandler.execute);
+  initialize();
+  return self;
 
-  return storeMethods;
+  function initialize() {
+    actionHandler.register(NAVIGATE_ACTION_TYPE, navigate);
+    dispatcher.register(actionHandler.execute);
+    configure(router, actionHandler, exposer.expose);
+  }
 
   function navigate(action) {
     router.execute(action.path);
