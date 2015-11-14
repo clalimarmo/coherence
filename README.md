@@ -13,7 +13,7 @@ function AnimalStore(dependencies) {
   var animalData = dependencies.animalData;
 
   var store = Coherence(dependencies.dispatcher, function(router, actions, expose) {
-    // exposed data, as Rx.ReplaySubject
+    // exposed data, as Rx.BehaviorSubject
     const words = expose('words');
     const currentAnimal = expose('currentAnimal');
 
