@@ -183,7 +183,7 @@ Within the context of a React class definition:
   - `this` is the React component
   - `bindMap` can be either be
     - an object, mapping exposed subject names, to component state properties
-    - or it can be empty, to bind all of the model's attributes to the component,
+    - or it can be omitted, to bind all of the model's attributes to the component,
       with the names defined by `expose`
   - be careful to avoid binding naming collisions, we currently don't do anything
     to protect against that
