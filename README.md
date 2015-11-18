@@ -1,44 +1,75 @@
 # Coherence
 
-A safety oriented Flux Store factory
+Flux inspired Models and Controllers, for your React app.
 
 ## Usage
 
-### Defining a Store
+### Defining view state models
 
 ```javascript
-var Coherence = require('coherence');
+// animals-model.js
+var Model = require('coherence').Model;
 
-function AnimalStore(dependencies) {
-  var animalData = dependencies.animalData;
+var Animals = function(dependencies) {
+  var getAnimalAsync = dependencies.getAnimalAsync;
 
-  var store = Coherence(dependencies.dispatcher, function(router, actions, expose) {
-    // exposed data, as Rx.BehaviorSubject
-    const words = expose('words');
-    const currentAnimal = expose('currentAnimal');
+  var model = Model(function(expose, def) {
+    // define bindable state
+    var currentAnimal = expose('currentAnimal');
+    var said = expose('said');
 
+    // define methods to change that state
+    def('select', function(animalId) {
+      getAnimalAsync.then(function(animal) {
+        currentAnimal.onNext(animal);
+      });
+    });
+
+    def('say', function(words) {
+      said.onNext(words);
+    });
+  });
+
+  return model;
+};
+
+Animals.instance = Animals({
+  getAnimalsAsync: require('...'),
+});
+
+module.exports = Animals;
+```
+
+### Defining action and route handlers
+
+```javascript
+// animals-controller.js
+
+var Controller = require('coherence').Controller;
+
+function AnimalsController(dependencies) {
+  var animals = dependencies.animals;
+
+  var manager = Controller(dependencies.dispatcher, function(router, intents) {
     router.register('/animals/:animalId', showAnimal);
-    actions.register('speak', speak);
+    intents.register('speak', speak);
 
     // action handler
     function speak(action) {
-      words.onNext(action.words);
+      dependencies.animals.say(action.words);
     }
 
     // route handler
     function show(path, params) {
-      animalData.fetch(params.animalId).then(function(animal) {
-        currentAnimal.onNext(animal);
-      });
-    }
-  });
+      dependencies.animals.select(params.animalId);
+    });
 
   return store;
 };
 
 AnimalStore.instance = AnimalStore({
   dispatcher: require('./my-app-dispatcher'),
-  animalData: require('./my-animal-data'),
+  animals: require('./animals-model').instance,
 });
 
 module.exports = AnimalStore;
@@ -52,13 +83,14 @@ module.exports = AnimalStore;
 var animalStore = require('./animal_store').instance;
 var AnimalView = React.createClass({
   componentWillMount: function() {
-    this.coherenceSubscriptions = animalStore.subscribe(this, {
-      animalData: 'animalData',
-      words: 'animalSays',
+    var animals = require('./animals-model').instance;
+    this.animalBindings = animals.ReactBindings(this, animals, {
+      animalData: 'currentAnimal',
+      animalSays: 'says',
     });
   },
   componentWillUnmount: function() {
-    this.coherenceSubscriptions.unsubscribe();
+    this.animalBindings.unbind();
   },
   render: function() {
     return (
@@ -101,7 +133,7 @@ yourDispatcher.dispatch({
 ### Defining a Store
 
 ```javascript
-var store = Coherence(dispatcher, function(router, actions, state) {
+var store = Coherence(dispatcher, function(router, intents) {
   /* define store behavior here */
 });
 ```
@@ -126,12 +158,6 @@ The Coherence function takes two arguments:
     - __actions.register(actionType, actionHandler)__
       - binds a handler function that gets called when a matching action is dispatched
       - the handler function receives the action payload object
-
-    - var subject = __expose(attributeName)__
-      - Instantiates and returns an
-        [Rx.BehaviorSubject](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/api/subjects/behaviorsubject.md),
-        which components may be bound to via `store.subscribe`.
-        `subject.onNext(nextValue)` will push the `nextValue` to subscribed components.
 
 ### Public Instance Methods
 

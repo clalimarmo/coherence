@@ -2,7 +2,7 @@ require('babelify/polyfill');
 
 const Coherence = require('./coherence');
 
-describe('Coherence.Controller:', () => {
+describe('Coherence:', () => {
   var mocks;
 
   beforeEach(() => {

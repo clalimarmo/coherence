@@ -7,8 +7,76 @@ const ReactTestUtils = require('react-addons-test-utils');
 const Coherence = require('./coherence');
 
 describe('React integration:', () => {
-  var greetingStore, dispatcher, Greeting, greetingDOMNode;
-  var greetingObservable;
+  var greetingController;
+  var dispatcher;
+  var greeter;
+  var GreetingView;
+  var greetingDOMNode;
+
+  beforeEach(() => {
+    dispatcher = {
+      register: (callback) => {
+        dispatcher.callbacks.push(callback);
+      },
+      dispatch: (payload) => {
+        dispatcher.callbacks.forEach((cb) => {
+          cb(payload);
+        });
+      },
+    };
+    dispatcher.callbacks = [];
+
+    greeter = Coherence.Model(function(expose, def) {
+      const greeting = expose('greeting', '...');
+
+      def('say', function(words) {
+        greeting.onNext(words);
+      });
+    });
+
+    greetingController = Coherence.Controller(dispatcher, (router, actions) => {
+      actions.register('say-goodbye', () => {
+        greeter.say('goodbye');
+      });
+
+      actions.register('say-hello', () => {
+        greeter.say('hello');
+      });
+
+      router.register('/logout', () => {
+        greeter.say('you are logged out');
+      });
+    });
+  });
+
+  context('component binding', () => {
+    beforeEach(() => {
+      GreetingView = React.createClass({
+        componentWillMount: function() {
+          this.coherenceBindings = greeter.ReactBindings(this, {
+            greeting: 'greeting',
+          })
+        },
+        componentWillUnmount: function() {
+          this.coherenceBindings.unsubscribe();
+        },
+        getInitialState: function() {
+          return {};
+        },
+        render: function() {
+          return (
+            <p>{this.state.greeting}</p>
+          );
+        },
+      });
+
+      const greetingElement = React.createElement(GreetingView, {});
+      const greetingComponent = ReactTestUtils.renderIntoDocument(greetingElement, {});
+      greetingDOMNode = ReactDOM.findDOMNode(greetingComponent);
+    });
+
+    runExamples();
+  });
 
   function navigate(path) {
     dispatcher.dispatch({
@@ -35,97 +103,8 @@ describe('React integration:', () => {
     });
 
     it('updates on navigate', () => {
-      navigate(greetingStore.path('logout'));
+      navigate(greetingController.path('logout'));
       expect(componentOutput()).to.include('you are logged out');
     });
   }
-
-  beforeEach(() => {
-    dispatcher = {
-      register: (callback) => {
-        dispatcher.callbacks.push(callback);
-      },
-      dispatch: (payload) => {
-        dispatcher.callbacks.forEach((cb) => {
-          cb(payload);
-        });
-      },
-    };
-    dispatcher.callbacks = [];
-
-    greetingStore = Coherence(dispatcher, (router, actions, expose) => {
-      const greeting = expose('greetingText', '...');
-
-      //for test assertion purposes
-      greetingObservable = greeting;
-
-      actions.register('say-goodbye', () => {
-        greeting.onNext('goodbye');
-      });
-
-      actions.register('say-hello', () => {
-        greeting.onNext('hello');
-      });
-
-      router.register('/logout', () => {
-        greeting.onNext('you are logged out');
-      });
-    });
-  });
-
-  context('component binding with default state mappings', () => {
-    beforeEach(() => {
-      Greeting = React.createClass({
-        componentWillMount: function() {
-          this.subscriptions = greetingStore.subscribe(this, ['greetingText']);
-        },
-        componentWillUnmount: function() {
-          this.subscriptions.dispose();
-        },
-        getInitialState: function() {
-          return {};
-        },
-        render: function() {
-          return (
-            <p>{this.state.greetingText}</p>
-          );
-        },
-      });
-
-      const greetingElement = React.createElement(Greeting, {});
-      const greetingComponent = ReactTestUtils.renderIntoDocument(greetingElement, {});
-      greetingDOMNode = ReactDOM.findDOMNode(greetingComponent);
-    });
-
-    runExamples();
-  });
-
-  context('component binding with custom state mappings', () => {
-    beforeEach(() => {
-      Greeting = React.createClass({
-        componentWillMount: function() {
-          this.subscriptions = greetingStore.subscribe(this, {
-            greetingText: 'greeting',
-          });
-        },
-        componentWillUnmount: function() {
-          this.subscriptions.dispose();
-        },
-        getInitialState: function() {
-          return {};
-        },
-        render: function() {
-          return (
-            <p>{this.state.greeting}</p>
-          );
-        },
-      });
-
-      const greetingElement = React.createElement(Greeting, {});
-      const greetingComponent = ReactTestUtils.renderIntoDocument(greetingElement, {});
-      greetingDOMNode = ReactDOM.findDOMNode(greetingComponent);
-    });
-
-    runExamples();
-  });
 });

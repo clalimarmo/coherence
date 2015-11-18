@@ -20,7 +20,7 @@ const Exposer = function() {
   };
 
   self.exposed = function() {
-    return observables;
+    return Object.keys(observables);
   };
 
   return self;
