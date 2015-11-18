@@ -19,8 +19,6 @@ var Bindings = function Bindings(component, bindMap, exposer) {
     });
   };
 
-  return self;
-
   function cleanedBindMap(bindMap) {
     var cleaned = bindMap || {};
 
@@ -31,7 +29,9 @@ var Bindings = function Bindings(component, bindMap, exposer) {
     }
 
     return cleaned;
-  };
+  }
+
+  return self;
 };
 
 var Binding = function Binding(component, stateName, exposer, modelAttr) {

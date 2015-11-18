@@ -25,7 +25,7 @@ describe('Coherence.Controller:', function () {
     });
 
     it('adds handlers to be called for a matching "navigate" action', function () {
-      Coherence.Controller(mocks.dispatcher, function (router, actions, expose) {
+      Coherence.Controller(mocks.dispatcher, function (router) {
         router.register('/users/:userId', mocks.routeHandler);
       });
 
@@ -58,7 +58,7 @@ describe('Coherence.Controller:', function () {
         count: 3
       };
 
-      Coherence.Controller(mocks.dispatcher, function (router, actions, expose) {
+      Coherence.Controller(mocks.dispatcher, function (_, actions) {
         actions.register('launch-missiles', mocks.actionHandler);
       });
     });
@@ -83,7 +83,7 @@ describe('Coherence.Controller:', function () {
     var store;
     beforeEach(function () {
       mocks.routeHandler = function () {};
-      store = Coherence.Controller(mocks.dispatcher, function (router, actions, expose) {
+      store = Coherence.Controller(mocks.dispatcher, function (router) {
         router.register('/users/:userId', mocks.routeHandler);
         router.register('/api', null, function (router) {
           router.register('/foods', mocks.routeHandler);

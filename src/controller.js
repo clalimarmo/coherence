@@ -10,9 +10,6 @@ const Controller = function(dispatcher, configure) {
 
   self.path = router.path;
 
-  initialize();
-  return self;
-
   function initialize() {
     actionHandler.register(NAVIGATE, navigate);
     dispatcher.register(actionHandler.execute);
@@ -21,7 +18,10 @@ const Controller = function(dispatcher, configure) {
 
   function navigate(action) {
     router.execute(action.path);
-  };
+  }
+
+  initialize();
+  return self;
 };
 
 module.exports = Controller;

@@ -1,8 +1,9 @@
 require('babelify/polyfill');
 
 const Coherence = require('./coherence');
+const expect = require('chai').expect;
 
-describe('Coherence:', () => {
+describe('Coherence.Controller:', () => {
   var mocks;
 
   beforeEach(() => {
@@ -23,7 +24,7 @@ describe('Coherence:', () => {
     });
 
     it('adds handlers to be called for a matching "navigate" action', () => {
-      Coherence.Controller(mocks.dispatcher, (router, actions, expose) => {
+      Coherence.Controller(mocks.dispatcher, (router) => {
         router.register('/users/:userId', mocks.routeHandler);
       });
 
@@ -56,7 +57,7 @@ describe('Coherence:', () => {
         count: 3,
       };
 
-      Coherence.Controller(mocks.dispatcher, (router, actions, expose) => {
+      Coherence.Controller(mocks.dispatcher, (router, actions) => {
         actions.register('launch-missiles', mocks.actionHandler);
       });
     });
@@ -81,7 +82,7 @@ describe('Coherence:', () => {
     var store;
     beforeEach(() => {
       mocks.routeHandler = () => {};
-      store = Coherence.Controller(mocks.dispatcher, (router, actions, expose) => {
+      store = Coherence.Controller(mocks.dispatcher, (router) => {
         router.register('/users/:userId', mocks.routeHandler);
         router.register('/api', null, (router) => {
           router.register('/foods', mocks.routeHandler);

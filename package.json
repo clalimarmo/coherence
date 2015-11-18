@@ -34,25 +34,25 @@
     "dumb-router": "^1.0.5"
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.5",
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "clean": "^4.0.1",
     "del": "^2.0.2",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
-    "karma": "^0.13.10",
-    "karma-babel-preprocessor": "^5.2.2",
-    "karma-browserify": "^4.3.0",
-    "karma-chai": "^0.1.0",
-    "karma-mocha": "^0.2.0",
-    "karma-phantomjs-launcher": "^0.2.1",
+    "gulp-eslint": "^1.1.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-util": "^3.0.7",
+    "jsdom": "^7.0.2",
     "mocha": "^2.3.3",
-    "phantomjs": "^1.9.18",
+    "mocha-jsdom": "^1.0.0",
     "react": "^0.14.2",
     "react-addons-test-utils": "^0.14.2",
     "react-dom": "^0.14.2",
     "require-dir": "^0.3.0",
     "rx-lite": "^4.0.6",
-    "vinyl-buffer": "^1.0.0"
+    "vinyl-buffer": "^1.0.0",
+    "yargs": "^3.30.0"
   }
 }

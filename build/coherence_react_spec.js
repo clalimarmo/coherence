@@ -1,7 +1,9 @@
 'use strict';
 
 require('core-js');
+var expect = require('chai').expect;
 
+var jsdom = require('mocha-jsdom');
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactTestUtils = require('react-addons-test-utils');
@@ -9,6 +11,8 @@ var ReactTestUtils = require('react-addons-test-utils');
 var Coherence = require('./coherence');
 
 describe('React integration:', function () {
+  jsdom();
+
   var greetingController;
   var dispatcher;
   var greeter;
