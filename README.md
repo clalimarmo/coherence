@@ -134,10 +134,13 @@ browser URL, and works with browser "back", see
 - __Coherence.NAVIGATE_ACTION_TYPE__
   - the action type to which registered routes will respond
 
-### Defining a Store
+### Defining a Controller
+
+Controllers map intents to behaviors. Typically, you'll use Controllers to call
+your models' methods.
 
 ```javascript
-var store = Coherence(dispatcher, function(router, intents) {
+var store = Coherence.Controller(dispatcher, function(router, intents) {
   /* define store behavior here */
 });
 ```
@@ -148,7 +151,7 @@ The Coherence function takes two arguments:
     Flux
 
 - __configurer__
-  - a callback, that accepts three arguments, used together to define the
+  - a callback, that accepts two arguments, used together to define the
     behavior of the returned store instance
 
     - __router.register(routeString, routeHandler)__
@@ -163,27 +166,31 @@ The Coherence function takes two arguments:
       - binds a handler function that gets called when a matching action is dispatched
       - the handler function receives the action payload object
 
-### Public Instance Methods
+### Controller methods
 
-Within the context of a React class definition:
-
-- this.subscriptions = __store.subscribe(this, bindingNames)__
-  - binds the component to update its state, whenever `subject.set` is called.
-  - `this` is the React component
-  - `bindingNames` can be either be
-    - an object, mapping exposed subject names, to component state properties
-    - or it can just be an array of exposed subject names, if you don't need
-      to use different names for your subjects, inside your component.
-
-- __this.subscriptions.unsubscribe()__
-  - cleans up the subscriptions set up by `store.subscribe`. Call this from
-    `componentWillUnmount`
-
-- __store.path(...pathParts)__
+- __controller.path(...pathParts)__
   - returns a path string, if the parts match one of the routes registered by
     `router.register` - see
     [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for
     more information
+
+### Binding a Model to a React component
+
+Within the context of a React class definition:
+
+- this.bindings = __model.ReactBindings(this, bindMap)__
+  - binds the component to update its state, whenever `subject.set` is called.
+  - `this` is the React component
+  - `bindMap` can be either be
+    - an object, mapping exposed subject names, to component state properties
+    - or it can be empty, to bind all of the model's attributes to the component,
+      with the names defined by `expose`
+  - be careful to avoid binding naming collisions, we currently don't do anything
+    to protect against that
+
+- __this.bindings.unsubscribe()__
+  - cleans up the subscriptions set up by `store.subscribe`. Call this from
+    `componentWillUnmount`
 
 ## Development
 
