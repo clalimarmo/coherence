@@ -15,7 +15,7 @@ var Bindings = function Bindings(component, bindMap, exposer) {
 
   self.unbind = function () {
     bindings.forEach(function (binding) {
-      binding.unsubscribe();
+      binding.dispose();
     });
   };
 

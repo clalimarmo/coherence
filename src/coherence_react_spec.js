@@ -14,6 +14,7 @@ describe('React integration:', () => {
   var greetingController;
   var dispatcher;
   var greeter;
+  var greetingComponent;
   var GreetingView;
   var greetingDOMNode;
 
@@ -62,7 +63,7 @@ describe('React integration:', () => {
           })
         },
         componentWillUnmount: function() {
-          this.coherenceBindings.unsubscribe();
+          this.coherenceBindings.unbind();
         },
         getInitialState: function() {
           return {};
@@ -75,7 +76,7 @@ describe('React integration:', () => {
       });
 
       const greetingElement = React.createElement(GreetingView, {});
-      const greetingComponent = ReactTestUtils.renderIntoDocument(greetingElement, {});
+      greetingComponent = ReactTestUtils.renderIntoDocument(greetingElement, {});
       greetingDOMNode = ReactDOM.findDOMNode(greetingComponent);
     });
 
@@ -109,6 +110,12 @@ describe('React integration:', () => {
     it('updates on navigate', () => {
       navigate(greetingController.path('logout'));
       expect(componentOutput()).to.include('you are logged out');
+    });
+
+    it('unmounts', () => {
+      expect(() => {
+        greetingComponent.componentWillUnmount();
+      }).to.not.throw(Error);
     });
   }
 });
