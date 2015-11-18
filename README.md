@@ -123,6 +123,10 @@ yourDispatcher.dispatch({
 });
 ```
 
+For pushState and replaceState hooks, so your navigate actions update the
+browser URL, and works with browser "back", see
+[coherence-pushstate](https://github.com/clalimarmo/coherence-pushstate).
+
 ## API
 
 ### Coherence
