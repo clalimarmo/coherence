@@ -9,7 +9,8 @@ gulp.task('spec', ['spec:build'], function(done) {
   var testFilePattern = argv.files || '**/*spec.js';
   return gulp.src('.tmp/compiled_tests/' + testFilePattern)
     .pipe(mocha())
-    .once('error', function() {
+    .once('error', function(err) {
+      gutil.log(gutil.colors.red(err));
       process.exit(1);
       done();
     })
