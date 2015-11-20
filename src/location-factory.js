@@ -11,14 +11,14 @@ const LocationFactory = function(_window) {
   const Location = {};
 
   Location.Navigate = function(path) {
-    if (history) {
+    if (history && history.pushState) {
       history.pushState({path: path}, null, path);
     }
     ChangeLocation(path);
   };
 
   Location.Redirect = function(path) {
-    if (history) {
+    if (history && history.replaceState) {
       history.replaceState({path: path}, null, path);
     }
     ChangeLocation(path);
