@@ -170,7 +170,8 @@ var Animals = function(dependencies) {
     });
   });
 
-  // Intent subscriptions can go in your model defs, but don't have to
+  // Intent subscriptions can be set up when you instantiate your model, or
+  // where ever else it is convenient
   Speak.subscribe((words) => {
     model.say(words);
   });
