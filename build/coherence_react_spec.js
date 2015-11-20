@@ -13,26 +13,13 @@ var Coherence = require('./coherence');
 describe('React integration:', function () {
   jsdom();
 
-  var greetingController;
-  var dispatcher;
   var greeter;
+  var Announce;
   var greetingComponent;
   var GreetingView;
   var greetingDOMNode;
 
   beforeEach(function () {
-    dispatcher = {
-      register: function register(callback) {
-        dispatcher.callbacks.push(callback);
-      },
-      dispatch: function dispatch(payload) {
-        dispatcher.callbacks.forEach(function (cb) {
-          cb(payload);
-        });
-      }
-    };
-    dispatcher.callbacks = [];
-
     greeter = Coherence.Model(function (expose, def) {
       var greeting = expose('greeting', '...');
 
@@ -41,18 +28,12 @@ describe('React integration:', function () {
       });
     });
 
-    greetingController = Coherence.Controller(dispatcher, function (router, actions) {
-      actions.register('say-goodbye', function () {
-        greeter.say('goodbye');
-      });
+    Announce = Coherence.Intent(function (words) {
+      return words;
+    });
 
-      actions.register('say-hello', function () {
-        greeter.say('hello');
-      });
-
-      router.register('/logout', function () {
-        greeter.say('you are logged out');
-      });
+    Announce.subscribe(function (words) {
+      greeter.say(words);
     });
   });
 
@@ -89,13 +70,6 @@ describe('React integration:', function () {
     runExamples();
   });
 
-  function navigate(path) {
-    dispatcher.dispatch({
-      type: Coherence.NAVIGATE_ACTION_TYPE,
-      path: path
-    });
-  }
-
   function componentOutput() {
     return greetingDOMNode.textContent;
   }
@@ -106,16 +80,11 @@ describe('React integration:', function () {
     });
 
     it('updates on actions', function () {
-      dispatcher.dispatch({ type: 'say-hello' });
+      Announce('hello');
       expect(componentOutput()).to.include('hello');
 
-      dispatcher.dispatch({ type: 'say-goodbye' });
+      Announce('goodbye');
       expect(componentOutput()).to.include('goodbye');
-    });
-
-    it('updates on navigate', function () {
-      navigate(greetingController.path('logout'));
-      expect(componentOutput()).to.include('you are logged out');
     });
 
     it('unmounts', function () {

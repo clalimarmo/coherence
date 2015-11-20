@@ -1,14 +1,85 @@
 # Coherence
 
-Flux inspired Models and Controllers, for your React app.
+Models and Intents, for your React app. Inspired by Flux.
 
 ## Usage
 
+### Intents
+
+Intents describe things that somebody wants to happen in your app.  "Somebody"
+might be you, the programmer, or the user. "Things" might be choosing a
+background color, sending a message, opening a form, or pre-fetching data from
+the server.
+
+Intents in Coherence are analogous to Actions _and_ the Dispatcher(s) of Flux.
+
+Intents are defined by a yielding function, which defines any input, and the
+output payload provided to the intent's subscribers, whenever the Intent is
+declared.
+
+#### Defining Intents
+
+```javascript
+// speak.js
+
+var Coherence = require('coherence');
+
+var Speak = Coherence.Intent((words) => {
+  return words;
+});
+
+module.exports = Speak;
+```
+
+```javascript
+// choose-animal.js
+var Coherence = require('coherence');
+
+var ChooseAnimal = Coherence.Intent((animalId) => {
+  return animalId;
+});
+
+module.exports = ChooseAnimal;
+```
+
+#### Declaring Intents
+
+When something should actually happen in your app, you _declare_ an Intent.
+
+```javascript
+// react component ...
+  speak: function() {
+    Speak(this.state.words);
+  },
+```
+
+#### Responding to Intents
+
+Intent subscriptions are the implementations of your application's behavior, in
+response to Intent declarations.
+
+```javascript
+Speak.subscribe((words) => {
+  // say something
+});
+```
+
 ### Defining view state models
+
+Models define component-bindable information. You can house your business logic
+here, but anything complex should probably be pushed into classes of your own
+creation.
+
+For Intent declarations to effect changes in your views:
+
+  - your views should be bound to Models
+  - Intent subscriptions should eventually call your Models' methods
+  - your Models' methods should modify view-exposed state
 
 ```javascript
 // animals-model.js
 var Model = require('coherence').Model;
+var Speak = require('./speak');
 
 var Animals = function(dependencies) {
   var getAnimalAsync = dependencies.getAnimalAsync;
@@ -30,60 +101,27 @@ var Animals = function(dependencies) {
     });
   });
 
+  // Intent subscriptions can go in your model defs, but don't have to
+  Speak.subscribe((words) => {
+    animals.say(words);
+  });
+
   return model;
 };
-
-Animals.instance = Animals({
-  getAnimalsAsync: require('...'),
-});
 
 module.exports = Animals;
 ```
 
-### Defining action and route handlers
-
-```javascript
-// animals-controller.js
-
-var Controller = require('coherence').Controller;
-
-function AnimalsController(dependencies) {
-  var animals = dependencies.animals;
-
-  var manager = Controller(dependencies.dispatcher, function(router, intents) {
-    router.register('/animals/:animalId', showAnimal);
-    intents.register('speak', speak);
-
-    // action handler
-    function speak(action) {
-      dependencies.animals.say(action.words);
-    }
-
-    // route handler
-    function show(path, params) {
-      dependencies.animals.select(params.animalId);
-    });
-
-  return store;
-};
-
-AnimalStore.instance = AnimalStore({
-  dispatcher: require('./my-app-dispatcher'),
-  animals: require('./animals-model').instance,
-});
-
-module.exports = AnimalStore;
-```
-
-### Using your Store
-
-#### In your controller components
+### Integrating Coherence Intents and Models with React
 
 ```javascript
 var animalStore = require('./animal_store').instance;
+var Speak = require('./speak');
+
+var animals = require('./animals-model').instance;
+
 var AnimalView = React.createClass({
   componentWillMount: function() {
-    var animals = require('./animals-model').instance;
     this.animalBindings = animals.ReactBindings(this, animals, {
       animalData: 'currentAnimal',
       animalSays: 'says',
@@ -95,84 +133,19 @@ var AnimalView = React.createClass({
   render: function() {
     return (
       <div>
+        <button onClick={this.saySomething}>Make Animal Say "something"</button>
         <AnimalData data={this.state.animalData} />
         <p>Animal says: {this.state.animalSays}</p>
       </div>
     );
-  }
+  },
+  saySomething: function() {
+    Speak('something');
+  },
 });
 ```
 
 ## Features
-
-### Routing
-
-"Routing" with Coherence, is really just a wrapper around action handling, with
-route matching and param parsing baked in (via
-[dumb-router](https://github.com/clalimarmo/dumb-router)).
-
-Registered routes listen for Actions with a type of
-`Coherence.NAVIGATE_ACTION_TYPE`, and with a `path` property.
-
-To trigger your routes:
-
-```javascript
-yourDispatcher.dispatch({
-  type: Coherence.NAVIGATE_ACTION_TYPE,
-  path: whereYouWantToGo,
-});
-```
-
-For pushState and replaceState hooks, so your navigate actions update the
-browser URL, and works with browser "back", see
-[coherence-pushstate](https://github.com/clalimarmo/coherence-pushstate).
-
-## API
-
-### Coherence
-
-- __Coherence.NAVIGATE_ACTION_TYPE__
-  - the action type to which registered routes will respond
-
-### Defining a Controller
-
-Controllers map intents to behaviors. Typically, you'll use Controllers to call
-your models' methods.
-
-```javascript
-var store = Coherence.Controller(dispatcher, function(router, intents) {
-  /* define store behavior here */
-});
-```
-The Coherence function takes two arguments:
-
-- __dispatcher__
-  - must define a `register` method that conforms to the semantics described by
-    Flux
-
-- __configurer__
-  - a callback, that accepts two arguments, used together to define the
-    behavior of the returned store instance
-
-    - __router.register(routeString, routeHandler)__
-      - binds a handler function that gets called when a matching "navigate"
-        action is dispatched - see
-        [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router)
-        for more information
-      - the handler function receives two params: the matching `path` string,
-        and a `params` object
-
-    - __actions.register(actionType, actionHandler)__
-      - binds a handler function that gets called when a matching action is dispatched
-      - the handler function receives the action payload object
-
-### Controller methods
-
-- __controller.path(...pathParts)__
-  - returns a path string, if the parts match one of the routes registered by
-    `router.register` - see
-    [dumb-router](https://github.com/clalimarmo/dumb-router#dumb-router) for
-    more information
 
 ### Binding a Model to a React component
 

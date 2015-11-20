@@ -11,26 +11,13 @@ const Coherence = require('./coherence');
 describe('React integration:', () => {
   jsdom();
 
-  var greetingController;
-  var dispatcher;
   var greeter;
+  var Announce;
   var greetingComponent;
   var GreetingView;
   var greetingDOMNode;
 
   beforeEach(() => {
-    dispatcher = {
-      register: (callback) => {
-        dispatcher.callbacks.push(callback);
-      },
-      dispatch: (payload) => {
-        dispatcher.callbacks.forEach((cb) => {
-          cb(payload);
-        });
-      },
-    };
-    dispatcher.callbacks = [];
-
     greeter = Coherence.Model(function(expose, def) {
       const greeting = expose('greeting', '...');
 
@@ -39,18 +26,12 @@ describe('React integration:', () => {
       });
     });
 
-    greetingController = Coherence.Controller(dispatcher, (router, actions) => {
-      actions.register('say-goodbye', () => {
-        greeter.say('goodbye');
-      });
+    Announce = Coherence.Intent((words) => {
+      return words;
+    });
 
-      actions.register('say-hello', () => {
-        greeter.say('hello');
-      });
-
-      router.register('/logout', () => {
-        greeter.say('you are logged out');
-      });
+    Announce.subscribe((words) => {
+      greeter.say(words);
     });
   });
 
@@ -83,13 +64,6 @@ describe('React integration:', () => {
     runExamples();
   });
 
-  function navigate(path) {
-    dispatcher.dispatch({
-      type: Coherence.NAVIGATE_ACTION_TYPE,
-      path: path,
-    });
-  }
-
   function componentOutput() {
     return greetingDOMNode.textContent;
   }
@@ -100,16 +74,11 @@ describe('React integration:', () => {
     });
 
     it('updates on actions', () => {
-      dispatcher.dispatch({type: 'say-hello'});
+      Announce('hello');
       expect(componentOutput()).to.include('hello');
 
-      dispatcher.dispatch({type: 'say-goodbye'});
+      Announce('goodbye');
       expect(componentOutput()).to.include('goodbye');
-    });
-
-    it('updates on navigate', () => {
-      navigate(greetingController.path('logout'));
-      expect(componentOutput()).to.include('you are logged out');
     });
 
     it('unmounts', () => {
