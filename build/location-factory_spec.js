@@ -58,9 +58,11 @@ describe('Coherence.LocationFactory:', function () {
         expect(mocks.window.history.pushState.args[0][2]).to.eq('/foo');
       });
 
-      it('does not Navigate without history.pushState, with false option', function () {
-        Location.Navigate('/foo', false);
-        expect(mocks.window.history.pushState.args.length).to.eq(0);
+      it('does not try to use history.pushState, if it is not there', function () {
+        delete mocks.window.history.pushState;
+        expect(function () {
+          Location.Navigate('/foo');
+        }).to.not['throw'](Error);
       });
     });
 
@@ -69,6 +71,13 @@ describe('Coherence.LocationFactory:', function () {
         Location.Redirect('/foo');
         expect(mocks.window.history.replaceState.args[0][0].path).to.eq('/foo');
         expect(mocks.window.history.replaceState.args[0][2]).to.eq('/foo');
+      });
+
+      it('does not try to use history.replaceState, if it is not there', function () {
+        delete mocks.window.history.replaceState;
+        expect(function () {
+          Location.Redirect('/foo');
+        }).to.not['throw'](Error);
       });
     });
 

@@ -12,15 +12,15 @@ var LocationFactory = function LocationFactory(_window) {
 
   var Location = {};
 
-  Location.Navigate = function (path, pushState) {
-    if (history && pushState !== false) {
+  Location.Navigate = function (path) {
+    if (history && history.pushState) {
       history.pushState({ path: path }, null, path);
     }
     ChangeLocation(path);
   };
 
   Location.Redirect = function (path) {
-    if (history) {
+    if (history && history.replaceState) {
       history.replaceState({ path: path }, null, path);
     }
     ChangeLocation(path);
