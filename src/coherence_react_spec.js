@@ -88,13 +88,13 @@ describe('React integration:', () => {
       expect(componentOutput()).to.include('goodbye');
     });
 
-    it('updates on Location.navigate', () => {
-      Location.navigate('/logout');
+    it('updates on Location.Navigate', () => {
+      Location.Navigate('/logout');
       expect(componentOutput()).to.include('see you next time');
     });
 
-    it('updates on Location.redirect', () => {
-      Location.redirect('/logout');
+    it('updates on Location.Redirect', () => {
+      Location.Redirect('/logout');
       expect(componentOutput()).to.include('see you next time');
     });
 

@@ -1,35 +1,37 @@
-const Subject = require('rx-lite').Subject;
+const Intent = require('./intent');
 
 const LocationFactory = function(_window) {
   _window = _window || {};
   const history = _window.history;
 
-  const location = new Subject();
+  const ChangeLocation = new Intent((path) => {
+    return path;
+  });
 
   const Location = {};
 
-  Location.navigate = function(path, pushState) {
+  Location.Navigate = function(path, pushState) {
     if (history && pushState !== false) {
       history.pushState({path: path}, null, path);
     }
-    location.onNext(path);
+    ChangeLocation(path);
   };
 
-  Location.redirect = function(path) {
+  Location.Redirect = function(path) {
     if (history) {
       history.replaceState({path: path}, null, path);
     }
-    location.onNext(path);
+    ChangeLocation(path);
   };
 
   Location.subscribe = function(...args) {
-    location.subscribe(...args);
+    ChangeLocation.subscribe(...args);
   };
 
   if (_window) {
     _window.onpopstate = function(event) {
       if (event.state && event.state.path) {
-        location.onNext(event.state.path);
+        ChangeLocation(event.state.path);
       }
     };
   }

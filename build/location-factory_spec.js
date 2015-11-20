@@ -19,20 +19,20 @@ describe('Coherence.LocationFactory:', function () {
     });
   });
 
-  context('navigate', function () {
+  context('Navigate', function () {
     it('yields path to subscribers', function () {
-      Location.navigate('/enemies/jeff');
-      Location.navigate('/enemies/kate');
+      Location.Navigate('/enemies/jeff');
+      Location.Navigate('/enemies/kate');
 
       expect(crushedEnemiesPaths).to.include('/enemies/jeff');
       expect(crushedEnemiesPaths).to.include('/enemies/kate');
     });
   });
 
-  context('redirect', function () {
+  context('Redirect', function () {
     it('yields path to subscribers', function () {
-      Location.redirect('/enemies/jeff');
-      Location.redirect('/enemies/kate');
+      Location.Redirect('/enemies/jeff');
+      Location.Redirect('/enemies/kate');
 
       expect(crushedEnemiesPaths).to.include('/enemies/jeff');
       expect(crushedEnemiesPaths).to.include('/enemies/kate');
@@ -51,22 +51,22 @@ describe('Coherence.LocationFactory:', function () {
       Location = Coherence.LocationFactory(mocks.window);
     });
 
-    context('navigate', function () {
+    context('Navigate', function () {
       it('uses history.pushState', function () {
-        Location.navigate('/foo');
+        Location.Navigate('/foo');
         expect(mocks.window.history.pushState.args[0][0].path).to.eq('/foo');
         expect(mocks.window.history.pushState.args[0][2]).to.eq('/foo');
       });
 
-      it('does not navigate without history.pushState, with false option', function () {
-        Location.navigate('/foo', false);
+      it('does not Navigate without history.pushState, with false option', function () {
+        Location.Navigate('/foo', false);
         expect(mocks.window.history.pushState.args.length).to.eq(0);
       });
     });
 
-    context('redirect', function () {
+    context('Redirect', function () {
       it('uses history.replaceState', function () {
-        Location.redirect('/foo');
+        Location.Redirect('/foo');
         expect(mocks.window.history.replaceState.args[0][0].path).to.eq('/foo');
         expect(mocks.window.history.replaceState.args[0][2]).to.eq('/foo');
       });
