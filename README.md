@@ -64,6 +64,41 @@ Speak.subscribe((words) => {
 });
 ```
 
+### Coherence.Location: Optional pushState and replaceState support
+
+If you'd like to use path-based Intents, you can use `Coherence.Location` to
+define an intent, and it will update browser history, and the URL, for you.
+
+This allows your app to handle deep-linking, and browser back/forward, using
+the same patterns for any other activity in your application.
+
+```javascript
+// navigate.js
+var Coherence = require('coherence');
+
+// passing in window enables pushState, replaceState, and onpopstate support,
+// for browsers that support those features
+var Location = Coherence.Location(window);
+
+module.exports = Coherence.Location(window);
+```
+
+- __Location.navigate(path)__
+  - Yields `path` to subscribers, and updates the URL via pushState, if enabled.
+  - `path` should be a string.
+
+- __Location.redirect(path)__
+  - Yields `path` to subscribers, and updates the URL via replaceState, if enabled.
+  - `path` should be a string.
+
+- __Location.subscribe(subscription)__
+  - adds a subscriber, which is called whenever Location changes via calls to
+    `navigate` or `redirect`. Subscription is passed a single argument: whatever
+    `path` is passed to `navigate` or `redirect`.
+
+Note: Location Intents yield the path to subscribers, which means you can
+bring your own routing solution.
+
 ### Defining view state models
 
 Models define component-bindable information. You can house your business logic
@@ -164,28 +199,6 @@ Within the context of a React class definition:
 - __this.bindings.unsubscribe()__
   - cleans up the subscriptions set up by `store.subscribe`. Call this from
     `componentWillUnmount`
-
-### Optional pushState and replaceState support
-
-If you'd like to use path-based Intents, you can use `Coherence.Location` to
-define an intent.
-
-```javascript
-// navigate.js
-var Coherence = require('coherence');
-
-// passing in window enables pushState, replaceState, and onpopstate support,
-// for browsers that support those features
-var Location = Coherence.Location(window);
-
-module.exports = Coherence.Location(window);
-```
-
-- __Location.navigate(path)__
-  - Yields path to subscribers, and updates the URL via pushState, if enabled.
-
-- __Location.redirect(path)__
-  - Yields path to subscribers, and updates the URL via replaceState, if enabled.
 
 ## Development
 
