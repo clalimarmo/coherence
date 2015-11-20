@@ -64,13 +64,14 @@ Speak.subscribe((words) => {
 });
 ```
 
-### Coherence.Location: Optional pushState and replaceState support
+### Coherence.LocationFactory: Optional pushState and replaceState support
 
-If you'd like to use path-based Intents, you can use `Coherence.Location` to
-define an intent, and it will update browser history, and the URL, for you.
+If you'd like to use path-based Intents, you can use
+`Coherence.LocationFactory` to define Intents that will update history, and the
+URL, for you.
 
 This allows your app to handle deep-linking, and browser back/forward, using
-the same patterns for any other activity in your application.
+the same patterns used for any other activity in your application.
 
 ```javascript
 // navigate.js
@@ -83,11 +84,11 @@ var Location = Coherence.Location(window);
 module.exports = Coherence.Location(window);
 ```
 
-- __Location.navigate(path)__
+- __Location.Navigate(path)__
   - Yields `path` to subscribers, and updates the URL via pushState, if enabled.
   - `path` should be a string.
 
-- __Location.redirect(path)__
+- __Location.Redirect(path)__
   - Yields `path` to subscribers, and updates the URL via replaceState, if enabled.
   - `path` should be a string.
 
