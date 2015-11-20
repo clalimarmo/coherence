@@ -31,6 +31,25 @@ Intents are defined by a yielding function, which defines any input, and the
 output payload provided to the intent's subscribers, whenever the Intent is
 declared.
 
+An popular pattern within the Flux community seems to be of "Action creators".
+These are a middle ground between Intents, and using a bare Dispatcher, and, I
+think, a step in the right direction. However, I think they don't go far enough.
+
+Coherence eschews a Dispatcher, and Action creators, in favor of individually
+subscribable Intents, for the following reasons:
+
+- The main advantage of a the Dispatcher is that it can resolve inter-store
+  dependencies. However, I disagree that an Action emitter (Dispatcher) is the
+  right place to encode state dependencies. Coherence is designed to let you
+  you implement models outside its purview, which resolve internal state
+  dependencies, and still expose those models' state to your view layer, with
+  `Coherence.Model`s.
+- Having stores switching on Action "type" strings is error-prone, without some
+  boilerplate safety around it. On the other hand, you can't subscribe to an
+  Intent that hasn't been defined. This is only partially addressed by the
+  Action creators, in that they make it less likely to create the wrong
+  actions, but no more likely that stores respond to the right ones.
+
 #### Defining Intents
 
 ```javascript
