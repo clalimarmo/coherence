@@ -81,7 +81,7 @@ var Coherence = require('coherence');
 // for browsers that support those features
 var Location = Coherence.Location(window);
 
-module.exports = Coherence.Location(window);
+module.exports = Location;
 ```
 
 - __Location.Navigate(path)__
