@@ -2,6 +2,8 @@
 
 Models and Intents, for your React app. Inspired by Flux.
 
+[API Documentation](docs)
+
 ## Usage
 
 ### Installation
