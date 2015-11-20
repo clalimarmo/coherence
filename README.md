@@ -188,7 +188,8 @@ var AnimalView = React.createClass({
 Within the context of a React class definition:
 
 - this.bindings = __model.ReactBindings(this, bindMap)__
-  - binds the component to update its state, whenever `subject.set` is called.
+  - binds the component to update its state, whenever values are pushed to exposed
+    state.
   - `this` is the React component
   - `bindMap` can be either be
     - an object, mapping exposed subject names, to component state properties
@@ -197,8 +198,8 @@ Within the context of a React class definition:
   - be careful to avoid binding naming collisions, we currently don't do anything
     to protect against that
 
-- __this.bindings.unsubscribe()__
-  - cleans up the subscriptions set up by `store.subscribe`. Call this from
+- __this.bindings.unbind()__
+  - cleans up the bindings set up by `model.ReactBindings`. Call this from
     `componentWillUnmount`
 
 ## Development
