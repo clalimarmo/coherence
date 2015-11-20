@@ -108,8 +108,8 @@ module.exports = Location;
 
 - __Location.subscribe(subscription)__
   - adds a subscriber, which is called whenever Location changes via calls to
-    `navigate` or `redirect`. Subscription is passed a single argument: whatever
-    `path` is passed to `navigate` or `redirect`.
+    `Navigate` or `Redirect`. Subscription is passed a single argument: whatever
+    `path` is passed to `Navigate` or `Redirect`.
 
 Note: Location Intents yield the path to subscribers, which means you can
 bring your own routing solution.
