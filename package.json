@@ -14,8 +14,7 @@
     "url": "https://github.com/clalimarmo/coherence.git"
   },
   "keywords": [
-    "routing",
-    "router",
+    "flux",
     "coherence"
   ],
   "author": "Carlos Lalimarmo",
@@ -38,7 +37,6 @@
     "clean": "^4.0.1",
     "core-js": "^1.2.6",
     "del": "^2.0.2",
-    "dumb-router": "^1.0.8",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-eslint": "^1.1.0",
