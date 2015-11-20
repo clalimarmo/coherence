@@ -24,7 +24,7 @@ describe('React integration:', function () {
       var greeting = expose('greeting', '...');
 
       def('say', function (words) {
-        greeting.onNext(words);
+        greeting.push(words);
       });
     });
 

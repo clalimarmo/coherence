@@ -22,7 +22,7 @@ describe('React integration:', () => {
       const greeting = expose('greeting', '...');
 
       def('say', function(words) {
-        greeting.onNext(words);
+        greeting.push(words);
       });
     });
 

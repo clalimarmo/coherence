@@ -11,7 +11,7 @@ var Exposer = function Exposer() {
       throw new Error(name + ' has already been exposed');
     }
     observables[name] = new BehaviorSubject(initialValue);
-    return observables[name];
+    return Exposed(observables[name]);
   };
 
   self.subscribe = function (name) {
@@ -33,6 +33,14 @@ var Exposer = function Exposer() {
   };
 
   return self;
+};
+
+var Exposed = function Exposed(subject) {
+  return {
+    push: function push() {
+      subject.onNext.apply(subject, arguments);
+    }
+  };
 };
 
 module.exports = Exposer;

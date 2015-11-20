@@ -9,7 +9,7 @@ const Exposer = function() {
       throw new Error(`${name} has already been exposed`);
     }
     observables[name] = new BehaviorSubject(initialValue);
-    return observables[name];
+    return Exposed(observables[name]);
   };
 
   self.subscribe = function(name, ...observerArgs) {
@@ -24,6 +24,14 @@ const Exposer = function() {
   };
 
   return self;
+};
+
+const Exposed = function(subject) {
+  return {
+    push: function(...args) {
+      subject.onNext(...args);
+    },
+  };
 };
 
 module.exports = Exposer;

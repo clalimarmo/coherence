@@ -92,12 +92,12 @@ var Animals = function(dependencies) {
     // define methods to change that state
     def('select', function(animalId) {
       getAnimalAsync.then(function(animal) {
-        currentAnimal.onNext(animal);
+        currentAnimal.push(animal);
       });
     });
 
     def('say', function(words) {
-      said.onNext(words);
+      said.push(words);
     });
   });
 
