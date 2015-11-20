@@ -10,8 +10,8 @@ const LocationFactory = function(_window) {
 
   const Location = {};
 
-  Location.Navigate = function(path, pushState) {
-    if (history && pushState !== false) {
+  Location.Navigate = function(path) {
+    if (history) {
       history.pushState({path: path}, null, path);
     }
     ChangeLocation(path);
