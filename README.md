@@ -111,8 +111,8 @@ module.exports = Location;
     `Navigate` or `Redirect`. Subscription is passed a single argument: whatever
     `path` is passed to `Navigate` or `Redirect`.
 
-Location Intents yield the path to subscribers, which means you can
-bring your own routing solution.
+Location Intents yield the path to subscribers, so that you can
+bring your preferred routing solution.
 
 ### Defining view state models
 
