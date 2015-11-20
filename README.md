@@ -172,7 +172,7 @@ var Animals = function(dependencies) {
 
   // Intent subscriptions can go in your model defs, but don't have to
   Speak.subscribe((words) => {
-    animals.say(words);
+    model.say(words);
   });
 
   return model;
