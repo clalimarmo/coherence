@@ -4,6 +4,20 @@ Models and Intents, for your React app. Inspired by Flux.
 
 ## Usage
 
+### Installation
+
+```bash
+npm install coherence
+```
+
+```javascript
+var Coherence = require('coherence');
+```
+
+Coherence is provided as a Node module, and has been used with Browserify for
+client-side code. If you've used another bundling tool for client-side usage,
+let me know!
+
 ### Intents
 
 Intents describe things that somebody wants to happen in your app.  "Somebody"
