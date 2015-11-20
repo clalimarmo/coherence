@@ -18,6 +18,7 @@ describe('React integration:', function () {
   var greetingComponent;
   var GreetingView;
   var greetingDOMNode;
+  var Location = Coherence.LocationFactory();
 
   beforeEach(function () {
     greeter = Coherence.Model(function (expose, def) {
@@ -34,6 +35,12 @@ describe('React integration:', function () {
 
     Announce.subscribe(function (words) {
       greeter.say(words);
+    });
+
+    Location.subscribe(function (path) {
+      if (path === '/logout') {
+        greeter.say('see you next time');
+      }
     });
   });
 
@@ -85,6 +92,16 @@ describe('React integration:', function () {
 
       Announce('goodbye');
       expect(componentOutput()).to.include('goodbye');
+    });
+
+    it('updates on Location.navigate', function () {
+      Location.navigate('/logout');
+      expect(componentOutput()).to.include('see you next time');
+    });
+
+    it('updates on Location.redirect', function () {
+      Location.redirect('/logout');
+      expect(componentOutput()).to.include('see you next time');
     });
 
     it('unmounts', function () {
