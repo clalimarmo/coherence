@@ -25,4 +25,13 @@ describe('Intent:', function () {
     expect(crushedEnemies).to.include('Giga-Fear');
     expect(crushedEnemies).to.include('soda pop');
   });
+
+  it('yields undefined payloads by default', function (done) {
+    var FinishTest = Intent();
+    FinishTest.subscribe(function (payload) {
+      expect(payload).to.be.undefined;
+      done();
+    });
+    FinishTest();
+  });
 });
