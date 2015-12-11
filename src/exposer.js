@@ -31,6 +31,10 @@ const Exposed = function(subject) {
     push: function(...args) {
       subject.onNext(...args);
     },
+
+    value: function() {
+      return subject.getValue();
+    },
   };
 };
 
