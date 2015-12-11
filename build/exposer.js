@@ -39,6 +39,10 @@ var Exposed = function Exposed(subject) {
   return {
     push: function push() {
       subject.onNext.apply(subject, arguments);
+    },
+
+    value: function value() {
+      return subject.getValue();
     }
   };
 };
