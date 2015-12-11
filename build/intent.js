@@ -6,7 +6,11 @@ var Intent = function Intent(yieldPayload) {
   var subject = new Subject();
 
   var Intentor = function Intentor() {
-    subject.onNext(yieldPayload.apply(undefined, arguments));
+    if (yieldPayload) {
+      subject.onNext(yieldPayload.apply(undefined, arguments));
+    } else {
+      subject.onNext(undefined);
+    }
   };
 
   Intentor.subscribe = function () {

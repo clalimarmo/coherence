@@ -4,7 +4,11 @@ const Intent = function(yieldPayload) {
   const subject = new Subject();
 
   const Intentor = function(...yieldArgs) {
-    subject.onNext(yieldPayload(...yieldArgs));
+    if (yieldPayload) {
+      subject.onNext(yieldPayload(...yieldArgs));
+    } else {
+      subject.onNext(undefined);
+    }
   };
 
   Intentor.subscribe = function(...args) {
