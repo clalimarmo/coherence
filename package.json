@@ -1,7 +1,7 @@
 {
   "name": "coherence",
-  "version": "3.0.0",
-  "description": "Flux-inspired Models and Controllers, for React apps",
+  "version": "3.0.1",
+  "description": "Flux-inspired Models and Intents, for React apps",
   "main": "build/coherence.js",
   "scripts": {
     "test": "gulp spec",
